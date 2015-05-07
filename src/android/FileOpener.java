@@ -30,6 +30,10 @@ public class FileOpener extends CordovaPlugin {
                 openFile(args.getString(0));
                 callbackContext.success();
                 return true;
+            } else if (action.equals("sendFile")) {
+                sendFile(args.getString(0));
+                callbackContext.success();
+                return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,6 +90,10 @@ public class FileOpener extends CordovaPlugin {
             // Text file
             intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, "text/plain");
+        } else if(url.contains(".mht") || url.contains(".mhtml")) {
+            // MHT file
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, "message/rfc822");
         } else if(url.contains(".mpg") || url.contains(".mpeg") || url.contains(".mpe") || url.contains(".mp4") || url.contains(".avi")) {
             // Video files
             intent = new Intent(Intent.ACTION_VIEW);
@@ -98,18 +106,104 @@ public class FileOpener extends CordovaPlugin {
         //in this case, Android will show all applications installed on the device
         //so you can choose which application to use
         
+        else {
+             intent = new Intent(Intent.ACTION_VIEW);
+             intent.setDataAndType(uri, "*/*");
+        }
+
         // else {
+        //     String mimeType = URLConnection.guessContentTypeFromName(url);
         //     intent = new Intent(Intent.ACTION_VIEW);
-        //     intent.setDataAndType(uri, "*/*");
+        //     intent.setDataAndType(uri, mimeType);
         // }
 
-        else {
-            String mimeType = URLConnection.guessContentTypeFromName(url);
-            intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri, mimeType);
-        }
-        Intent fileChooser = Intent.createChooser(intent, "Open File");
-        this.cordova.getActivity().startActivity(fileChooser); // TODO handle ActivityNotFoundException
+        this.cordova.getActivity().startActivity(intent); // TODO handle ActivityNotFoundException
     }
+    
+    private void sendFile(String url) throws IOException {
+        // Create URI
+        Uri uri = Uri.parse(url);
 
+        Intent intent;
+        // Check what kind of file you are trying to open, by comparing the url with extensions.
+        // When the if condition is matched, plugin sets the correct intent (mime) type, 
+        // so Android knew what application to use to open the file
+
+        if (url.contains(".doc") || url.contains(".docx")) {
+            // Word document
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("application/msword");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".pdf")) {
+            // PDF file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("application/pdf");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".ppt") || url.contains(".pptx")) {
+            // Powerpoint file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("application/vnd.ms-powerpoint");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);            
+        } else if(url.contains(".xls") || url.contains(".xlsx")) {
+            // Excel file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("application/vnd.ms-excel");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".rtf")) {
+            // RTF file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("application/rtf");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".wav")) {
+            // WAV audio file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("audio/x-wav");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".gif")) {
+            // GIF file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/gif");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".jpg") || url.contains(".jpeg")) {
+            // JPG file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/jpeg");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".txt")) {
+            // Text file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".mht") || url.contains(".mhtml")) {
+            // MHT file
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("message/rfc822");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else if(url.contains(".mpg") || url.contains(".mpeg") || url.contains(".mpe") || url.contains(".mp4") || url.contains(".avi")) {
+            // Video files
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("video/*");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
+                
+        //if you want you can also define the intent type for any other file
+        
+        //additionally use else clause below, to manage other unknown extensions
+        //in this case, Android will show all applications installed on the device
+        //so you can choose which application to use
+        
+        else {
+            intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
+
+        // else {
+        //     String mimeType = URLConnection.guessContentTypeFromName(url);
+        //     intent = new Intent(Intent.ACTION_VIEW);
+        //     intent.setDataAndType(uri, mimeType);
+        // }
+
+        this.cordova.getActivity().startActivity(Intent.createChooser(intent, "Send to: ")); // TODO handle ActivityNotFoundException
+    }    
 }
