@@ -13,7 +13,7 @@ module.exports = {
             }
         }
         cordova.exec(opt_success, opt_failure, "FileOpener", "openFile", [url]);
-    }
+    },
     send: function (url, opt_success, opt_failure) {
         if (typeof opt_success == 'undefined') {
             opt_success = function () {
