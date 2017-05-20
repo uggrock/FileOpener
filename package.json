@@ -1,0 +1,33 @@
+{
+  "name": "FileOpener",
+  "version": "0.0.3",
+  "description": "FileOpener plugin for Phonegap =============",
+  "cordova": {
+    "id": "com.phonegap.plugins.fileopener",
+    "platforms": [
+      "android",
+      "wp8"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uggrock/FileOpener.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-wp8"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uggrock/FileOpener/issues"
+  },
+  "homepage": "https://github.com/uggrock/FileOpener#readme"
+}
